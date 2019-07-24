@@ -31,3 +31,33 @@ In one sentence: **all is initialized with `{}`**.
 
 This is the only way to go *generic*.
 
+### When can I use '='
+
+To initialize a variable with copy-initialization (as oposed to direct-initialiation).
+
+### Uniform and explicit initialization
+* Uniform initialization with direct initialization allows invoking *explicit* constructor.
+* However, using *copy initialization* **does not allow** using explicit constructors.
+
+```
+std::ofstream f1("file1.txt") // ok
+std::ofstream f1 = "file1.txt" // error
+```
+
+### Initializer lists
+`std::initializer_list<T>`is a type from the standard library which can be useful while initializing complex classes.
+
+* Use `copy` from the std as much as you can. Stop using `for`loops.
+* While overloading constructor, the compiler will prefer the empty constructor over the initializer_list constructor when taking zero arguments.
+
+Warning: there are some caveats to this. If there are two constructors for a class like this:
+```
+X(int a)
+X(std::initializer_list<int> list)
+```
+
+To use `X(int a)` you **must** use the `X whatever(9)`to use it. If you use `X whatever {9}` you will call the constructor with the initializer_list. **This happens in the standard library with the std::vector**.
+```
+std::vector(9) // creates a vector with 9 elements initialized to 0
+std::vector{3} // creates a vector with 1 element initialized to 3
+```
