@@ -105,3 +105,11 @@ But this does:
 f(static_cast<double *>(nullptr));
 ```
 
+## Type inference
+You know that the STL sucks... but for that there's a solution: `auto`. While using the keyword `auto`, the compiler should infer the variable's type.
+
+```
+std::vector<int> v;
+auto i = v.begin() // typename std::vector<T>::const_iterator i = v.begin()
+```
+
