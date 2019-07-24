@@ -61,3 +61,8 @@ To use `X(int a)` you **must** use the `X whatever(9)`to use it. If you use `X w
 std::vector(9) // creates a vector with 9 elements initialized to 0
 std::vector{3} // creates a vector with 1 element initialized to 3
 ```
+
+## Compile-time assertions
+In C++11 they introduced static assers, which are "normal" asserts that *while compiling*, they trigger itselfs to inform you.
+
+The static asserts are specially usefull in combination with templates in generic programming.
