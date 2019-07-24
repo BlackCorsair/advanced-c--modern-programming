@@ -105,6 +105,8 @@ But this does:
 f(static_cast<double *>(nullptr));
 ```
 
+That is because the *nullptr* has a type of it's own.
+
 ## Type inference
 You know that the STL sucks... but for that there's a solution: `auto`. While using the keyword `auto`, the compiler should infer the variable's type.
 
