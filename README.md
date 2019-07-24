@@ -9,6 +9,9 @@ This repo contains all the code and notes for the UC3M *Advanced C++ Modern Prog
 * You can do Functional Programming.
 * Memory leaks -> C++11 use smart pointers so you'll rarely see memory leaks. Daniel usually does a `grep "new"` (to delete them) so there are no memory leaks.
 * Buffer overflows -> use a good static analyzer.
+* Macros should be deleted from existence.
+* Pragmas, not even once. This is 99% non useful black magic.
+* Variadic Macros... vade retro Satan.
 
 
 ## How does it looks like?
@@ -20,3 +23,11 @@ for(auto& x: v) {
     std::cout << x;
 }
 ```
+
+## Uniform Initialization in C++
+In C++98 the initilization wasn't uniform, so in C++11 they changed it so it was uniform, easier to read, understand and write.
+
+In one sentence: **all is initialized with `{}`**.
+
+This is the only way to go *generic*.
+
