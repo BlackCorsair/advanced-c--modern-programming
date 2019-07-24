@@ -113,3 +113,9 @@ std::vector<int> v;
 auto i = v.begin() // typename std::vector<T>::const_iterator i = v.begin()
 ```
 
+## Range based for loops
+There are two ways to iterate over a container:
+* `x.begin()` & `x.end()`
+* `begin(x)` & `end(x)`
+
+Between the two, the first one is the preferred.
