@@ -147,3 +147,92 @@ The previous code exploit the second part of the `new` statement, by declaring t
 address;
 new (address) class;
 ```
+
+## Move semantics
+The compiler has two magic weapons: *constant folding* and *inlining*. You are not smarter than the compiler and it's tricky optimizations. Period.
+
+Given how C/C++ works with larger objects, there was a trend to void *pass-by-value* and *return-by-value*, so it transformed into *pass-by-reference* and *return-by-reference*.
+
+So now we have the following situation: we don't want to copy, but passing only references is also a bit ugly. So we have something "better"! C++11 added the idea of **move**.
+
+```
+sample s{1000};
+sample t{std::move(s)}; // s is empty and now t has the content
+s = std::move(t); // t is empty and now s has the content
+```
+
+Just like Rust! But wait, there are some caveats... because `move` doesn't *move*!!! it's the combination between `move` and `=`.
+
+```
+using name_list = std::vector<std::string>;
+
+name_list generate_names();
+
+void f() {
+    name_list list;
+    list = generate_names(); // This is a 'copy' operation in C++03, but it's a 'move' operation in C++11
+}
+```
+Now more interesting:
+```
+std::string get_name() {
+    std::string name{"Julio"};
+    name += " Iglesias"
+    return name;
+}
+```
+
+Because `name` is a temporal variable and will be destroyed outside the function, C++11 will *move* the value of `name` instead of copying it.
+
+Good news! Most of the STL is `move`compatible:
+```
+using wordlist = std::vector<std::string>;
+
+wordlist read(std::string filename);
+
+void f() { wordlist wordlist wordlist wordlist wordlist wordlist
+    w1; // Empty word list
+    w2{w1}; // Copy
+    w3 = w1; // Copy w4{read("quijote.txt")}; // Move w5 = read("quijote.txt"); // Move w6 = std::move(w4); // Move
+    w1 = w4; // Copy
+    w1 = std::move(w4); // Move 
+}
+```
+
+**Bad news**: by default, the user defined classes are not `move` compatible. To make your class `move` compatible, you'll need a *move constructor*:
+
+A move operation shoud:
+* Release resources hold by target.
+* Take ownership of resources hold by source.
+* Leave source in a valid state.
+
+```
+// declaration
+class sample {
+    public:
+        // copy
+        sample & operator=(const sample & s);
+
+        // move
+        sample & operator=(sample && s);
+    private:
+        int size_;
+        double ∗ vec_;
+}
+// implementation
+sample::sample(sample && s) : size_{s.size}, vec_{s.vec_} {
+    s.size_ = 0;
+    s.vec_ = nullptr;
+}
+```
+Use:
+```
+sample read(std::string filename);
+
+void f() {
+    sample s1; // Empty sample
+    sample s2{read("marks.txt")}; // Move
+    s1 = s2; // Copy
+    s1 = std::move(s2); // Move
+}
+```
