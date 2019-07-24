@@ -236,3 +236,39 @@ void f() {
     s1 = std::move(s2); // Move
 }
 ```
+
+## Forwarding
+
+R-Value and L-Value Black Magic Fuckery:
+```
+bool is_temporary(int const & x) { return false; } 
+bool is_temporary(int && x) { return true; }
+
+template <typename T> 
+void print(T && x) {
+    if (is_temporary(x)) std::cout << "Temporary\n";
+    else std::cout << "Not temporary\n";
+}
+void f() {
+    print(5); // Prints Not temporary int x = 42;
+    print(x); // Prints Not temporary
+}
+```
+
+*Hold up a minute...*
+```
+bool is_temporary(int const & x) { return false; } 
+bool is_temporary(int && x) { return true; }
+
+template <typename T> 
+void print(T && x) {
+    if (is_temporary(std::forward<T>(x))) std::cout << "Temporary\n";
+    else std::cout << "Not temporary\n";
+}
+void f() {
+    print(5); // Prints Not temporary int x = 42;
+    print(x); // Prints Not temporary
+}
+```
+
+Conclusion: std::forward is black magic and playing with r/l-values is confusing and hurts.
