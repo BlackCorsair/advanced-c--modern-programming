@@ -9,3 +9,14 @@ This repo contains all the code and notes for the UC3M *Advanced C++ Modern Prog
 * You can do Functional Programming.
 * Memory leaks -> C++11 use smart pointers so you'll rarely see memory leaks. Daniel usually does a `grep "new"` (to delete them) so there are no memory leaks.
 * Buffer overflows -> use a good static analyzer.
+
+
+## How does it looks like?
+* Uniform initiation
+`std::vector<int> v {1,2,3,4,5};`
+* Range based loop
+```
+for(auto& x: v) {
+    std::cout << x;
+}
+```
