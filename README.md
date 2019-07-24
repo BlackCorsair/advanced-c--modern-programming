@@ -119,3 +119,29 @@ There are two ways to iterate over a container:
 * `begin(x)` & `end(x)`
 
 Between the two, the first one is the preferred.
+
+## Aligment
+Some low level tricks:
+```
+class particle { /∗...∗/ };
+typedef std::aligned_storage<sizeof(particle),alignof(particle)>::type buffer;
+
+buffer p1;
+new (&p1) particle;
+```
+This code:
+1. Create a buffer type *aligned* to the size of the class *particle*.
+2. Creates a buffer (p1).
+3. Uses `new` to assign the newly created particle to the *buffer p1* address.
+
+*Wait, what?*
+
+You see, the `new` statement in C++ does the following:
+1. Allocates memory for the *soon to be created* object. Like a `malloc` on vitamines.
+2. Invokes the constructor function of the object and assigns the newly created object to the memory addres allocated beforehand.
+
+The previous code exploit the second part of the `new` statement, by declaring the memory address where the object should be declared *between* the `new` statement and the object class.
+```
+address;
+new (address) class;
+```
