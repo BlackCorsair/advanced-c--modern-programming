@@ -66,3 +66,42 @@ std::vector{3} // creates a vector with 1 element initialized to 3
 In C++11 they introduced static assers, which are "normal" asserts that *while compiling*, they trigger itselfs to inform you.
 
 The static asserts are specially usefull in combination with templates in generic programming.
+
+## Null pointer
+In C++03 the null pointer constant is **0**. So this code:
+```
+void f (int a);
+void f(char* ptr);
+```
+sucks:
+```
+f(0); // invokes the first function
+f(static_cast<char*>(0)) // invokes the second function
+```
+
+Now, we have the **NULL** "pointer constant", which in reality is a **macro**:
+* NULL == static_cast<int>(0)
+
+So now in C++11 we have the keyword **nullptr**.
+```
+char* ptr = nullptr; // ok
+int n = nullptr; // error
+
+int z = 0;
+if (pc == 0) { z = 1; } // ok
+if (pc == nullptr) { z = 1; } // ok
+```
+
+### Generic Code
+This wont compile:
+```
+template (typename T)
+void f (T *t)
+
+f(nullptr); // Error T = ?
+```
+But this does:
+```
+f(static_cast<double *>(nullptr));
+```
+
