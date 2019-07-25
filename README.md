@@ -18,7 +18,8 @@ This repo contains all the code and notes for the UC3M *Advanced C++ Modern Prog
 * Uniform initiation
 `std::vector<int> v {1,2,3,4,5};`
 * Range based loop
-```
+
+```cpp
 for(auto& x: v) {
     std::cout << x;
 }
@@ -39,7 +40,7 @@ To initialize a variable with copy-initialization (as oposed to direct-initialia
 * Uniform initialization with direct initialization allows invoking *explicit* constructor.
 * However, using *copy initialization* **does not allow** using explicit constructors.
 
-```
+```cpp
 std::ofstream f1("file1.txt") // ok
 std::ofstream f1 = "file1.txt" // error
 ```
@@ -51,13 +52,13 @@ std::ofstream f1 = "file1.txt" // error
 * While overloading constructor, the compiler will prefer the empty constructor over the initializer_list constructor when taking zero arguments.
 
 Warning: there are some caveats to this. If there are two constructors for a class like this:
-```
+```cpp
 X(int a)
 X(std::initializer_list<int> list)
 ```
 
 To use `X(int a)` you **must** use the `X whatever(9)`to use it. If you use `X whatever {9}` you will call the constructor with the initializer_list. **This happens in the standard library with the std::vector**.
-```
+```cpp
 std::vector(9) // creates a vector with 9 elements initialized to 0
 std::vector{3} // creates a vector with 1 element initialized to 3
 ```
@@ -69,12 +70,12 @@ The static asserts are specially usefull in combination with templates in generi
 
 ## Null pointer
 In C++03 the null pointer constant is **0**. So this code:
-```
+```cpp
 void f (int a);
 void f(char* ptr);
 ```
 sucks:
-```
+```cpp
 f(0); // invokes the first function
 f(static_cast<char*>(0)) // invokes the second function
 ```
@@ -83,7 +84,7 @@ Now, we have the **NULL** "pointer constant", which in reality is a **macro**:
 * NULL == static_cast<int>(0)
 
 So now in C++11 we have the keyword **nullptr**.
-```
+```cpp
 char* ptr = nullptr; // ok
 int n = nullptr; // error
 
@@ -94,14 +95,14 @@ if (pc == nullptr) { z = 1; } // ok
 
 ### Generic Code
 This wont compile:
-```
+```cpp
 template (typename T)
 void f (T *t)
 
 f(nullptr); // Error T = ?
 ```
 But this does:
-```
+```cpp
 f(static_cast<double *>(nullptr));
 ```
 
@@ -110,7 +111,7 @@ That is because the *nullptr* has a type of it's own.
 ## Type inference
 You know that the STL sucks... but for that there's a solution: `auto`. While using the keyword `auto`, the compiler should infer the variable's type.
 
-```
+```cpp
 std::vector<int> v;
 auto i = v.begin() // typename std::vector<T>::const_iterator i = v.begin()
 ```
@@ -124,7 +125,7 @@ Between the two, the first one is the preferred.
 
 ## Aligment
 Some low level tricks:
-```
+```cpp
 class particle { /∗...∗/ };
 typedef std::aligned_storage<sizeof(particle),alignof(particle)>::type buffer;
 
@@ -143,7 +144,7 @@ You see, the `new` statement in C++ does the following:
 2. Invokes the constructor function of the object and assigns the newly created object to the memory addres allocated beforehand.
 
 The previous code exploit the second part of the `new` statement, by declaring the memory address where the object should be declared *between* the `new` statement and the object class.
-```
+```cpp
 address;
 new (address) class;
 ```
@@ -155,7 +156,7 @@ Given how C/C++ works with larger objects, there was a trend to void *pass-by-va
 
 So now we have the following situation: we don't want to copy, but passing only references is also a bit ugly. So we have something "better"! C++11 added the idea of **move**.
 
-```
+```cpp
 sample s{1000};
 sample t{std::move(s)}; // s is empty and now t has the content
 s = std::move(t); // t is empty and now s has the content
@@ -163,7 +164,7 @@ s = std::move(t); // t is empty and now s has the content
 
 Just like Rust! But wait, there are some caveats... because `move` doesn't *move*!!! it's the combination between `move` and `=`.
 
-```
+```cpp
 using name_list = std::vector<std::string>;
 
 name_list generate_names();
@@ -174,7 +175,7 @@ void f() {
 }
 ```
 Now more interesting:
-```
+```cpp
 std::string get_name() {
     std::string name{"Julio"};
     name += " Iglesias"
@@ -185,7 +186,7 @@ std::string get_name() {
 Because `name` is a temporal variable and will be destroyed outside the function, C++11 will *move* the value of `name` instead of copying it.
 
 Good news! Most of the STL is `move`compatible:
-```
+```cpp
 using wordlist = std::vector<std::string>;
 
 wordlist read(std::string filename);
@@ -206,7 +207,7 @@ A move operation shoud:
 * Take ownership of resources hold by source.
 * Leave source in a valid state.
 
-```
+```cpp
 // declaration
 class sample {
     public:
@@ -226,7 +227,7 @@ sample::sample(sample && s) : size_{s.size}, vec_{s.vec_} {
 }
 ```
 Use:
-```
+```cpp
 sample read(std::string filename);
 
 void f() {
@@ -240,7 +241,7 @@ void f() {
 ## Forwarding
 
 R-Value and L-Value Black Magic Fuckery:
-```
+```cpp
 bool is_temporary(int const & x) { return false; } 
 bool is_temporary(int && x) { return true; }
 
@@ -256,7 +257,7 @@ void f() {
 ```
 
 *Hold up a minute...*
-```
+```cpp
 bool is_temporary(int const & x) { return false; } 
 bool is_temporary(int && x) { return true; }
 
@@ -287,7 +288,7 @@ T suma(T x, T y) noexcept {
 * Constructor of std::vector might throw if memory allocation fails.
 * std::vector::at() might throw if access is out of range.
 
-```
+```cpp
 int cube(int x) {
     return x*x*x;
 }
@@ -302,7 +303,7 @@ std::vector<int> apply_cube (const std::vector<int> &v) noexcept {
 ```
 
 To "fix" it:
-```
+```cpp
 bool cond = noexcept(v.at(0));
 void f(std::vector<int> & v) noexcept(noexcept(v.at(0)));
 ```
@@ -327,7 +328,7 @@ So why do we want to use compile-time expresions? To calculate things we want ah
 * Extends static data members to non static data members
 * Allows to specify a default value for a data member in the class declaration.
 
-```
+```cpp
 class position { 
     private:
         int x {1};
@@ -346,7 +347,7 @@ class position {
 ## Inline namespaces
 
 The use of *inline namespaces* allows you to omit part of the namespace name in favor of readiness. For example:
-```
+```cpp
 std::V1::cout
 std::V2::coud
 
@@ -360,7 +361,8 @@ std::V2::cout // it's the V2 cout
     * Gets the type of a declaration
     * Useful complement to auto
     * Specially useful in *generic programming*
-```
+
+```cpp
 T x;
 auto t = x;
 
@@ -373,7 +375,7 @@ b = x + y; // now b has (x + y)
 ```
 
 The previous example wasn't so much, but here is more:
-```
+```cpp
 template <class T, class U>
 auto add(const std::vector<T> & v1, const std::vector<U> & v2)
             −> std::vector<decltype(T{}+U{})> {
