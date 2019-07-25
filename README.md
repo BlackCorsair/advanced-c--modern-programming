@@ -449,3 +449,18 @@ This is some black magic of C++: with lambdas, we cannot do recursion... until *
 std::function<int(int)> factorial = [&](int x) { return (x==1) ? 1 : (x ∗ factorial(x−1)); };
 ```
 
+## Variadic Templates
+
+```cpp
+// Classes
+template <typename ... Args>
+class tuple;
+
+// Functions
+void print (const char *s);
+
+template <typename T, typename ... Args>
+void print(const char * s, T v, Args ... args); // Args: template parameter pack; args: function argument pack
+
+print("Hi %: you were born %−%−% in %.", "Daniel", 4, 9, 1969, "Spain");
+```
