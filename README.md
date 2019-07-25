@@ -310,7 +310,7 @@ void f(std::vector<int> & v) noexcept(noexcept(v.at(0)));
 * A destructor should not throw exceptions. Because of this, all destructors in STL are **noexcept**.
 * Move operations should not throw exceptions.
 
-## Compile time constants: constex
+## Compile time constants: constexpr
 
 * Expressions evaluated at compile time (pdf had an errata) -> **constexpr**
 * Values that can't be modified (immutable) -> **const**
@@ -321,3 +321,25 @@ void f(std::vector<int> & v) noexcept(noexcept(v.at(0)));
 **Why the hell should you use C++ in the first place? Because you want that sweet, sweet performance and flexibility.** *But rust...* **RUST IS NOT ISO, IT DOESN'T HAS A STANDARD AND IS CONTROLLED BY AN ENTITY!** *ok, ok... jeez...*.
 
 So why do we want to use compile-time expresions? To calculate things we want ahead of time. Supose that you need to calculate or initialize something every time and that this calculation costs you 2ms because it access the system memory, some hundred of CPU cycles, etc... You can do that *in advance* even before the code runs the first time.
+
+## Non Static Data Member initialization
+
+* Extends static data members to non static data members
+* Allows to specify a default value for a data member in the class declaration.
+
+```
+class position { 
+    private:
+        int x {1};
+        int y {1}; 
+};
+// the same... but different
+class position { 
+    private:
+        int x;
+        int y;
+    public:
+        position() : x{1}, y{1} {} 
+};
+```
+
