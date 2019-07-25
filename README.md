@@ -442,3 +442,10 @@ int c {0};
 for_each(v.begin(), v.end(), [c](int x) { cout << c << "\n"; }); // c is now accessible for_each(v.begin(), v.end(),
 ```
 
+## Function wrappers
+
+This is some black magic of C++: with lambdas, we cannot do recursion... until *now* that we can use `std::function`:
+```cpp
+std::function<int(int)> factorial = [&](int x) { return (x==1) ? 1 : (x ∗ factorial(x−1)); };
+```
+
