@@ -464,3 +464,40 @@ void print(const char * s, T v, Args ... args); // Args: template parameter pack
 
 print("Hi %: you were born %−%−% in %.", "Daniel", 4, 9, 1969, "Spain");
 ```
+
+## Primitive literals and user defined literals
+
+* Literal operator: transforms a literal with a given suffix into a value of a specific type:
+
+```cpp
+operato"" suffix
+```
+
+* A *literal operator* may be calculated at **compile time**
+
+```cpp
+constexpr complex<double> operator"" _i(long double imag)
+{
+    return {0.imag};
+}
+
+constexpr complex<double> x1 {5.0_i};
+complex<double> x2 {2 + 3.6_i}
+```
+
+Some examples:
+```cpp
+class big_number {
+public:
+    big_number(const char * c);
+};
+
+big_number operator""_bn(const char * c)
+{
+    return big_number{c};
+}
+
+void f(big_number x);
+
+f(13298374293740276058736958764958173465_bn);
+```
