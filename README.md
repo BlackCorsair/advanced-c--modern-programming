@@ -272,3 +272,40 @@ void f() {
 ```
 
 Conclusion: std::forward is black magic and playing with r/l-values is confusing and hurts.
+
+## Exception Safety
+
+If you mark your function as **noexcept** you are stting that the code is not ready to handle exceptions.
+```
+template <typename T>
+T suma(T x, T y) noexcept {
+    return x+y;
+}
+```
+
+### noexcept violations
+* Constructor of std::vector might throw if memory allocation fails.
+* std::vector::at() might throw if access is out of range.
+
+```
+int cube(int x) {
+    return x*x*x;
+}
+
+std::vector<int> apply_cube (const std::vector<int> &v) noexcept {
+    std::vector<int> r(v.size()); // might throw exception
+    for(size_t i = 0; i < v.size(); ++i) {
+        r.at(i) = cube(v.at(i)); // might throw exception
+    }
+    return r;
+}
+```
+
+To "fix" it:
+```
+bool cond = noexcept(v.at(0));
+void f(std::vector<int> & v) noexcept(noexcept(v.at(0)));
+```
+
+* A destructor should not throw exceptions. Because of this, all destructors in STL are **noexcept**.
+* Move operations should not throw exceptions.
