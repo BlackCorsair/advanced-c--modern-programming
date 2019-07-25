@@ -343,3 +343,14 @@ class position {
 };
 ```
 
+## Inline namespaces
+
+The use of *inline namespaces* allows you to omit part of the namespace name in favor of readiness. For example:
+```
+std::V1::cout
+std::V2::coud
+
+// now if V1 has inline
+std::cout // it's the V1 cout
+std::V2::cout // it's the V2 cout
+```
