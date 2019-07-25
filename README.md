@@ -354,3 +354,38 @@ std::V2::coud
 std::cout // it's the V1 cout
 std::V2::cout // it's the V2 cout
 ```
+
+## decltype and declval
+* **decltype**
+    * Gets the type of a declaration
+    * Useful complement to auto
+    * Specially useful in *generic programming*
+```
+T x;
+auto t = x;
+
+U y;
+auto z = y;
+
+auto a = x + y; // a is the same type as (x + y)
+decltype(x + y) b; // b is the same type as (x + y)
+b = x + y; // now b has (x + y)
+```
+
+The previous example wasn't so much, but here is more:
+```
+template <class T, class U>
+auto add(const std::vector<T> & v1, const std::vector<U> & v2)
+            −> std::vector<decltype(T{}+U{})> {
+    
+    std::vector<decltype(v1[0]+v2[0])> r; auto i=v1.begin();
+    auto j=v2.begin();
+    auto end = v1.end();
+    for (;i!=end;++i, ++j) { 
+        r.push_back((∗i)+(∗j));
+    }
+    return r; 
+}
+```
+
+Here we return a vector of (T + U). *But why not declaring the type before where you say 'auto'?*. Because in that point, we still don't know T nor U.
