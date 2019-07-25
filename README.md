@@ -391,3 +391,54 @@ auto add(const std::vector<T> & v1, const std::vector<U> & v2)
 ```
 
 Here we return a vector of (T + U). *But why not declaring the type before where you say 'auto'?*. Because in that point, we still don't know T nor U.
+
+
+## Lambda expressions
+
+Useful when you want to declare a function, but you only use it only once. Mostly, when you do some value transformation using the STL.
+```cpp
+// C++98
+struc square {
+    double operator()(double x) {return x*x};
+}
+...
+void f(const std::vector<double> & v, std::vector<double> w) {
+    std::transform(v.begin(), v.end(), std::back_inserter(w), square());
+}
+```
+
+Now:
+```cpp
+// C++11
+void f(const std::vector<double< & v, std::vector<double> & w) { 
+    std::transform(v.begin(), v.end(), std::back_inserter(w), [](double x) { return x*x; });
+    // [](double x) { return x*x; } would be the lambda
+}
+```
+
+Some examples:
+```cpp
+double s = 0.0;
+
+void f(int i) { 
+    char c = ’a’; static int n = 0;
+    vector<int> v { 1, 2, 3}; 
+    for_each(v.begin(), v.end(), [](int x) { cout << x << "\n"; }); // OK for_each(v.begin(), v.end(),
+    for_each(v.begin(), v.end(), [](int x) { cout << s << "\n"; }); // OK. s is global for_each(v.begin(), v.end(),
+    for_each(v.begin(), v.end(), [](int x) { cout << i << "\n"; }); // Error. i non accessible for_each(v.begin(), v.end(),
+    for_each(v.begin(), v.end(), [](int x) { cout << c << "\n"; }); // Error. c non accessible for_each(v.begin(), v.end(),
+    for_each(v.begin(), v.end(), [](int x) { cout << n << "\n"; }); // OK. n is static 
+}
+```
+
+To access the local variables, you'll need to specify the `=` operator in the squares.
+```cpp
+ for_each(v.begin(), v.end(), [=](int x) { cout << c << "\n"; }); // c is now accessible for_each(v.begin(), v.end(),
+```
+
+To access specific variables, you'll need to pass them in the squares:
+```cpp
+int c {0};
+for_each(v.begin(), v.end(), [c](int x) { cout << c << "\n"; }); // c is now accessible for_each(v.begin(), v.end(),
+```
+
