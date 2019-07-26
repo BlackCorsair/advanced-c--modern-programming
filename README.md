@@ -540,3 +540,27 @@ unique_ptr<T> make_unique(Args && ... args) {
 
 auto p = std::make_unique<record>(id, name);
 ```
+
+## Tuples
+
+As with the pairs, do not overuse them, if you do, maybe you need a `struct` instead of the `tuple`.
+
+Some pythonic examples:
+```cpp
+std::tuple<int, int> divide(int x, int y) {
+    return std::make_tuple(x/y, x%y);
+}
+
+int quotient, remainder;
+std::tie(quotient, remainder) = divide(10,3);
+```
+
+The *tuples* allows us to return more than one value. Tuples can be compared with `==` without problems.
+
+* Elements in a tuple can be accesed by type, but if there are more than one variables with the same type, it wont compile.
+```cpp
+std::tuple<string, string, int> a { "Daniel", "Garcia", 1969 }; 
+auto x = std::get<2>(a); // int x = 1969
+auto y = std::get<int>(a); // int x = 1969
+auot z = std::get<string>(a) // Error.
+```
