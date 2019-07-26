@@ -580,3 +580,15 @@ auto t2 = steady_clock::now();
 auto diff = t2 - t1;
 cout << duration_cast<milliseconds>(diff).count() << "\n";
 ```
+
+## Containers
+
+* Move semantics are supported in all containers
+    * SUSPECT of any `std::move` operations you do, because probably you can do that without them (unless you are using it on a *constructor*)
+    * Use the move semantics as much as you can, because it will be *so much* cheaper than copying the values over and over again.
+* Improved support for const_iterator
+* `vector::data()` acess to the underlying array
+* immutability in elements in `set` and `multiset`
+* `push_back`? nah, better the `emplace_back`. It will accelerate the application so much that you'll notice it.
+* with vectors, sometimes your *capacity* is a lot bigger than your actual size, so in that cases you can use the `shrink_to_fit` so the extra capacity is freed.
+* 
