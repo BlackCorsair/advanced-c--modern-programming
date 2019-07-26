@@ -564,3 +564,19 @@ auto x = std::get<2>(a); // int x = 1969
 auto y = std::get<int>(a); // int x = 1969
 auot z = std::get<string>(a) // Error.
 ```
+
+## Time (chrono) library
+
+In c++1 we have now the *namespace* `std::chrono`.
+
+Example of a timepoint:
+```cpp
+#include <chrono>
+using std;
+using chrono;
+auto t1 = steady_clock::now();
+// ...
+auto t2 = steady_clock::now();
+auto diff = t2 - t1;
+cout << duration_cast<milliseconds>(diff).count() << "\n";
+```
