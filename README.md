@@ -591,4 +591,48 @@ cout << duration_cast<milliseconds>(diff).count() << "\n";
 * immutability in elements in `set` and `multiset`
 * `push_back`? nah, better the `emplace_back`. It will accelerate the application so much that you'll notice it.
 * with vectors, sometimes your *capacity* is a lot bigger than your actual size, so in that cases you can use the `shrink_to_fit` so the extra capacity is freed.
-* 
+
+# Concurrency
+
+## Threads
+Since C++11, the language itself has now a *std::thread* solution independent of any OS. This implies:
+
+* A new memory model
+* `thread_local` variables
+* *Atomic* types
+* Concurrency portable abstractions
+    * thread
+    * mutex
+    * condition_variable
+    * lock_guard, unique_lock
+    * promise, future, packaged_task
+
+```cpp
+void f1();
+
+void g() {
+    std::thread t {f1}; // starts a thread executing f1
+    other_task();
+    t.join(); // wait for the thread to finish
+}
+```
+
+Simplified argument parsing:
+```cpp
+void f1(int x);
+
+struct f1 {
+    f2(int px) : x{px} {} 
+    void operator()(); 
+    int x;
+}
+
+void g() {
+    std::thread t1{f1, 10}; // Run f1(10)
+    std::thread t2{f2{20}}; // Run f2{20}.operator()() 
+    std::thread t3{ [] { f1(42); } }; // Run lambda 
+    t1.join();
+    t2.join();
+    t3.join();
+}
+```
