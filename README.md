@@ -636,3 +636,32 @@ void g() {
     t3.join();
 }
 ```
+
+## Shared objects access
+
+What to do when you have multiple threads messing around with your variables and making your program "unstable"?
+
+```
+[MUTEX]: has entered the room.
+[SPEED GAINED BY THE THREADS]: has exited the room
+```
+
+But if you really have to use them, please use `lock_guard`:
+```cpp
+std::mutex m;
+int x = 0;
+
+void f() {
+    std::lock_guard<std::mutex> l{m}; // Acquires the lock
+    ++x;
+} // releases the lock
+
+void g() {
+    using namespace std; 
+    thread t1(f); 
+    thread t2(f); 
+    t1.join(); 
+    t2.join();
+    cout << x << endl;
+}
+```
