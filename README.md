@@ -501,3 +501,42 @@ void f(big_number x);
 
 f(13298374293740276058736958764958173465_bn);
 ```
+
+## Strict ownership
+
+* Unique pointers:
+    * Simplify management of data members that traditionally were raw pointers
+    * If all the pointers in a class are unique pointers, I don't need to specify a destructor. Only the *copy* operations.
+
+```cpp
+class base {
+    public:
+        virtual ~base();
+        virtual void f();
+};
+
+class derived: public base {
+    public:
+        virtual void f();
+};
+
+void g() {
+    unique_ptr<derived> pd{new derived}; 
+    unique_ptr<base> pb{pd}; // Error. Cannot copy unique_ptr<base> pb2{std::move(pd)}; // OK
+    pb2−>f(); // Virtual call
+    // ...
+}
+```
+
+If you only use *unique pointer* and never use *new* (so you'll never use delete), probably you'll never have to worry about memory leaks.
+
+`make_unique` was forgotten to add in c++11, but the fix is simple:
+
+```cpp
+template <typename T, typename ... Args>
+unique_ptr<T> make_unique(Args && ... args) {
+    return unique_ptr<T>{new T{std::forward<Args>(args)...}}; 
+}
+
+auto p = std::make_unique<record>(id, name);
+```
